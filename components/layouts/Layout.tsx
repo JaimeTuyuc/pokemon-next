@@ -7,7 +7,10 @@ interface Props { // Search why is not accepting FC as the type of the React Nod
     children: React.ReactNode
 }
 
+const origin = (typeof window === 'undefined') ? '' : window.location.origin
+
 export const Layout: FC<Props> = ({ children, title }) => {
+
 
     return (
         <>
@@ -16,6 +19,10 @@ export const Layout: FC<Props> = ({ children, title }) => {
                 <meta name='author' content='Jaime Tuyuc' />
                 <meta name='description' content='Pokemon info Charizard' />
                 <meta name='keywords' content='charizard, pokemon, pokedex' />
+
+                <meta property="og:title" content={`Information about ${title}`} />
+                <meta property="og:description" content={`This is a page with content about ${title}`} />
+                <meta property="og:image" content={`${origin}/img/banner.png`} />
             </Head>
             <NavBar />
             <main
