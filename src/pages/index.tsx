@@ -15,10 +15,6 @@ const HomePage:NextPage<Props> = ({pokemons}) => {
       <Layout title='Pokemon App - By James'>
         <h1>Pokemon Using Nextjs</h1>
 
-        <Button
-          color='gradient'
-        >Boton de Next UI</Button>
-
         <Grid.Container gap={2} justify='flex-start'>
           {
             pokemons.map((poke) => {
