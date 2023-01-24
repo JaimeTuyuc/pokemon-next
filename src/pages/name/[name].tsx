@@ -1,18 +1,18 @@
 import React, { useState } from 'react'
 import { Layout } from 'components/layouts';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
-import { PokemonFullResponse } from 'interfaces';
+import { PokemonFullResponse, PokemonListResponse } from 'interfaces';
 import { pokeApi } from 'api';
 import { Button, Card, Container, Grid, Image, Text } from '@nextui-org/react';
 import { localFavorites } from 'utils';
 import confetti from 'canvas-confetti'
-import { getPokemonInfo } from '../../../utils/getPokemonInfo';
+import { getPokemonInfo } from 'utils/getPokemonInfo';
 
 interface Props {
     pokemon: PokemonFullResponse
 }
 
-const PokemonPage: NextPage<Props> = ({ pokemon }) => {
+const PokemonByNamePage: NextPage<Props> = ({ pokemon }) => {
     const [ isInFavorite, setIsInFavorite ] = useState<boolean>(localFavorites.existInFavorites(pokemon.id))
     const onToggleFavorite = () => {
         localFavorites.toggleFavorites(pokemon.id)
@@ -105,15 +105,15 @@ const PokemonPage: NextPage<Props> = ({ pokemon }) => {
     )
 }
 
-export default PokemonPage;
+export default PokemonByNamePage;
 
 export const getStaticPaths: GetStaticPaths = async (ctx) => {
 
-    const pokemons151 = [...Array(151)].map((va, idx) => `${idx + 1}`)
-
+    const { data } = await pokeApi.get<PokemonListResponse>(`/pokemon?limit=151`)
+    const pokemonNames:string[] = data.results.map( (pokemon) => pokemon.name )
     return {
-        paths: pokemons151.map(id => ({
-            params: { id }
+        paths: pokemonNames.map( name => ({
+            params: { name }
         })),
         fallback: false
     }
@@ -121,9 +121,8 @@ export const getStaticPaths: GetStaticPaths = async (ctx) => {
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
     
-    const { id } = params as { id: string }
-    const pokemon = await getPokemonInfo(id)
-
+    const { name } = params as { name: string }
+    const pokemon = await getPokemonInfo(name)
     return {
         props: { 
             pokemon: pokemon
